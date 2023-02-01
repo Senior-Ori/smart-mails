@@ -4,5 +4,6 @@
         "freertos.h": "c",
         "esp_log.h": "c",
         "gpio.h": "c"
-    }
+    },
+    "idf.adapterTargetName": "esp32"
 }
