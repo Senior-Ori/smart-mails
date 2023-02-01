@@ -16,8 +16,7 @@
           "${workspaceFolder}"
         ],
         "limitSymbolsToIncludedHeaders": false
-      },
-      "compilerPath": "/path/to/toolchain-gcc"
+      }
     }
   ],
   "version": 4
