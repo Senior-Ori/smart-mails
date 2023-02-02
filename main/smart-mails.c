@@ -16,6 +16,8 @@
 
 #include "esp_http_server.h"
 #include "cJSON.h"
+#include "mdns.h"
+#include "routes/_routes.h"
 
 /** DEFINES **/
 #define WIFI_SUCCESS 1 << 0
