@@ -18,10 +18,10 @@
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
 
+#include "esp_http_client.h"
 #include "esp_http_server.h"
+#include "esp_netif.h"
 #include "cJSON.h"
-#include "mdns.h"
-#include "routes/_routes.h"
 
 /** DEFINES **/
 #define WIFI_SUCCESS 1 << 0
@@ -209,66 +209,6 @@ esp_err_t connect_tcp_server(void)
     }
 
     return TCP_SUCCESS;
-}
-
-static void init_server()
-{
-
-    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    config.uri_match_fn = httpd_uri_match_wildcard;
-
-    ESP_ERROR_CHECK(httpd_start(&server, &config));
-
-    httpd_uri_t get_hello_world = {
-        .uri = "/api/hello-world",
-        .method = HTTP_GET,
-        .handler = on_hello_world};
-    httpd_register_uri_handler(server, &get_hello_world);
-
-    httpd_uri_t get_ap_list_url = {
-        .uri = "/api/get-ap-list",
-        .method = HTTP_GET,
-        .handler = on_get_ap_list};
-    httpd_register_uri_handler(server, &get_ap_list_url);
-
-    httpd_uri_t toggle_led_url = {
-        .uri = "/api/toggle-led",
-        .method = HTTP_POST,
-        .handler = on_toggle_led_url};
-    httpd_register_uri_handler(server, &toggle_led_url);
-
-    httpd_uri_t ap_to_sta_url = {
-        .uri = "/api/ap-sta",
-        .method = HTTP_POST,
-        .handler = on_ap_to_sta};
-    httpd_register_uri_handler(server, &ap_to_sta_url);
-
-    httpd_uri_t web_magnetometer_url = {
-        .uri = "/ws-api/magnetometer",
-        .method = HTTP_GET,
-        .handler = on_magnetometer,
-        .is_websocket = true};
-    httpd_register_uri_handler(server, &web_magnetometer_url);
-
-    httpd_uri_t servo_url = {
-        .uri = "/ws-api/servo",
-        .method = HTTP_GET,
-        .handler = on_servo_url,
-        .is_websocket = true};
-    httpd_register_uri_handler(server, &servo_url);
-
-    httpd_uri_t btn_push_url = {
-        .uri = "/ws-api/btn-push",
-        .method = HTTP_GET,
-        .handler = on_web_socket_btn_push_url,
-        .is_websocket = true};
-    httpd_register_uri_handler(server, &btn_push_url);
-
-    httpd_uri_t default_url = {
-        .uri = "/*",
-        .method = HTTP_GET,
-        .handler = on_default_url};
-    httpd_register_uri_handler(server, &default_url);
 }
 
 void app_main(void)
