@@ -1,0 +1,348 @@
+commit f892b10871d73319df66d32eb502bdf48cd8f1ec (HEAD, tag: v0.13.0, origin/main, origin/HEAD, main)
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-31
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-31
+
+    Bump package and library versions
+
+commit 2cea2bb7e705e9a84f0d1a9d8bd08779540794b7
+Merge: b08e38a3 f03defb8
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-30
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-30
+
+    Merge pull request #661 from ngtcp2/remove-sphinx-theme-bundle
+    
+    Remove sphinx theme bundle
+
+commit b08e38a38217597c971f56ed8efa96e1c2a5c3f0
+Merge: 726d75bc b8c77ab0
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-30
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-30
+
+    Merge pull request #660 from ngtcp2/bump-boringssl
+    
+    Bump boringssl
+
+commit f03defb8fd4985cbf2c94ead427cc867cfdba546
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-30
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-30
+
+    Remove sphinx theme bundle
+    
+    Remove sphinx theme bundle, and rely on the locally installed theme.
+
+commit b8c77ab041554e262f3b4c037c47f90f5a46753f
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-30
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-30
+
+    Bump boringssl
+
+commit 726d75bcd6b36a51a94af06d4f4a103b7b7bb7f1
+Merge: 520afbe3 14ffd96c
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-25
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-25
+
+    Merge pull request #659 from ngtcp2/timer-fixed-format
+    
+    examples: Use std::fixed for timer value
+
+commit 14ffd96ced594b12738674d62fee232befda9ee4
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-25
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-25
+
+    examples: Use std::fixed for timer value
+
+commit 520afbe37ddbffc3978590d41b6db5aef0b8d63a
+Merge: fa4dce63 fb050cb4
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-12
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-12
+
+    Merge pull request #656 from ngtcp2/clarify-preferred-versions
+    
+    Clarify server behavior when negotiating version with preferred_versions
+
+commit fb050cb48bf4fab1cab886f923f865c6a313e67d
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-12
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-12
+
+    Clarify server behavior when negotiating version with preferred_versions
+
+commit fa4dce633bbfe59959b0dff0318c6e8faa4ded27
+Merge: 11e3c640 e6a5e8d2
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-12
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-12
+
+    Merge pull request #655 from ngtcp2/remove-v2draft
+    
+    Remove QUIC version 2 draft
+
+commit e6a5e8d20c037eeb73e2cc05b6724fb468196e7d
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-12
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-12
+
+    Remove QUIC version 2 draft
+    
+    Remove QUIC version 2 draft because QUIC version 2 draft most likely
+    requires old Version Information transport parameter codepoint, which
+    ngtcp2 does not support anymore.
+
+commit 11e3c640e0fc859fca85f14dfeff896ea15b856b
+Merge: e9902989 5cf6271c
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-12
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-12
+
+    Merge pull request #654 from ngtcp2/vn-draft14
+    
+    Update Version Negotiation to draft-14
+
+commit 5cf6271cf1d039320dd703f59aef7a9a5605535f
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-12
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-12
+
+    Update Version Negotiation to draft-14
+
+commit e99029897f46b6155bc1af7b52cdb990ad2c48e1
+Merge: 4778991c 00328817
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-12
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-12
+
+    Merge pull request #651 from donny-dont/static-lib-suffix
+    
+    Make hard-coded static library suffix optional
+
+commit 4778991cdd0868ba964296647b3f50d7488c5deb
+Merge: ef723b53 54e4921c
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-12
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-12
+
+    Merge pull request #653 from ngtcp2/format-quic-version-in-hex
+    
+    examples: Format QUIC version in hex string
+
+commit 54e4921caef6d8c96a420a6381c82d89865b4d94
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-12
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-12
+
+    examples: Format QUIC version in hex string
+
+commit ef723b53dec003d1149af70f28d9f4c8e2970e49
+Merge: bc4fdca8 fdbf421a
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-12
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-12
+
+    Merge pull request #652 from ngtcp2/v2final
+    
+    Add final QUIC version 2 support
+
+commit fdbf421a69975b4d9d7dcd1daea804dca52b2c5e
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-12
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-12
+
+    Add final QUIC version 2 support
+
+commit 00328817f5b7292c9ad3a4cc676328f71171e17b
+Author:     Don <don.j.olmstead@gmail.com>
+AuthorDate: 2023-01-10
+Commit:     Don <don.j.olmstead@gmail.com>
+CommitDate: 2023-01-10
+
+    Make hard-coded static library suffix optional
+    
+    Add `STATIC_LIB_SUFFIX` to set the suffix directly.
+
+commit bc4fdca8445a7ade89198d91ede33500f1e57bc3
+Merge: d522fe60 01177d30
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-07
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-07
+
+    Merge pull request #650 from ngtcp2/token-type
+    
+    Make token a pair of pointer to const uint8_t and its size
+
+commit 01177d3078915b1783789135d446c02b54e7b4d9
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-07
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-07
+
+    Make token a pair of pointer to const uint8_t and its size
+    
+    Previously, tokens are of type ngtcp2_vec.  Meanwhile, in other
+    places, we use a pair of plain pointer to const uint8_t and size_t as
+    length.  This commit changes the type of tokens to a pair of pointer
+    and size_t for consistency.
+
+commit d522fe60d1e165f391454b57e79b4abdffe2390c
+Merge: a2a43f4d b1884ac1
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-07
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-07
+
+    Merge pull request #649 from ngtcp2/const-array
+    
+    Add const qualifier to some array fields
+
+commit a2a43f4dbbe9a6036dfbcbeae332f0ee63cac6b2
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-07
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-07
+
+    Bump library version due to the v0.12.1 patch release
+
+commit b1884ac154185bd5aba1e6e13acea8a876b589ac
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-07
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-07
+
+    Add const qualifier to some array fields
+
+commit 8d4627f1c27553c4a4cababe192df9d088113542
+Merge: 9492659f 6accbc36
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2023-01-01
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2023-01-01
+
+    Merge pull request #648 from ngtcp2/picotls-keylog
+    
+    Picotls keylog
+
+commit 6accbc361284d86965cd7a337a6827aab25826e3
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-01
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-01
+
+    picotls: Implement SSLKEYLOGFILE
+
+commit 7db7389e577f453bf8845e164bda8f60510ad475
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2023-01-01
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2023-01-01
+
+    Bump picotls
+
+commit 9492659fbafe7329146b42c6949fbb7c659cb580
+Merge: 49858ea0 cdc2a4c1
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2022-12-30
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2022-12-30
+
+    Merge pull request #647 from ngtcp2/bbr2-fix-assertion-failure
+    
+    bbr2: Fix assertion failure
+
+commit cdc2a4c17b07912a1ef46733a7bc4b53a033bca7
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2022-12-30
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-12-30
+
+    bbr2: Fix assertion failure
+
+commit 49858ea0a045c831ffb69bcd01d2c9d0af79f99a
+Merge: f3c9e070 d557635c
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2022-12-25
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2022-12-25
+
+    Merge pull request #645 from ngtcp2/remove-version
+    
+    Remove TLS lib version to make the maintenance easier
+
+commit f3c9e0700a05131c941f1fd276523d114867a299
+Merge: 2dc93536 e514314c
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2022-12-25
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2022-12-25
+
+    Merge pull request #644 from ngtcp2/server-cleanup-assoc-cid
+    
+    server: Cleanup Connection ID association
+
+commit d557635c65e59693cad20c3266343a61cb7f8c6b
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2022-12-25
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-12-25
+
+    Remove TLS lib version to make the maintenance easier
+
+commit 2dc93536f3b8aa83f141ab09bb8aab1bf7b28097
+Merge: 1e5a2f41 7ac933a6
+Author:     Tatsuhiro Tsujikawa <404610+tatsuhiro-t@users.noreply.github.com>
+AuthorDate: 2022-12-25
+Commit:     GitHub <noreply@github.com>
+CommitDate: 2022-12-25
+
+    Merge pull request #643 from ngtcp2/doc-assoc-conn-id
+    
+    Add section to describe how to associate Connection ID to ngtcp2_conn
+
+commit e514314cbf0e86a27c5d9aa1eea9aa8a7f144d12
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2022-12-25
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-12-25
+
+    server: Cleanup Connection ID association
+
+commit 7ac933a644c1108aee911b65985e21e6cc7fdde8
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2022-12-25
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-12-25
+
+    Add section to describe how to associate Connection ID to ngtcp2_conn
+
+commit 1e5a2f41d6324768017d0d398e717ae161cb5dd6
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2022-12-24
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-12-24
+
+    Bump package version
