@@ -189,6 +189,7 @@ static void post_rest_function()
         .skip_cert_common_name_check = true,
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .method = HTTP_METHOD_PUT,
+        .transport_type = HTTP_TRANSPORT_OVER_SSL,
         .event_handler = client_event_post_handler};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
