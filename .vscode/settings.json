@@ -10,7 +10,8 @@
     "nvs_flash.h": "c",
     "err.h": "c",
     "esp_system.h": "c",
-    "param.h": "c"
+    "param.h": "c",
+    "esp_http_client.h": "c"
   },
   "idf.adapterTargetName": "esp32"
 }

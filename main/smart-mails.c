@@ -6,17 +6,10 @@
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
 #include "freertos/timers.h"
-#include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
-
-#include "lwip/err.h"
-#include "lwip/sockets.h"
-#include "lwip/sys.h"
-#include "lwip/netdb.h"
-#include "lwip/dns.h"
 
 #include "esp_http_client.h"
 #include "esp_http_server.h"
@@ -171,6 +164,7 @@ esp_err_t connect_wifi()
     return status;
 }
 
+// may replace in future.
 // connect to the server and return the result
 esp_err_t connect_tcp_server(void)
 {
@@ -211,6 +205,40 @@ esp_err_t connect_tcp_server(void)
     return TCP_SUCCESS;
 }
 
+esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
+{
+    switch (evt->event_id)
+    {
+    case HTTP_EVENT_ON_DATA:
+        printf("HTTP_EVENT_ON_DATA: %.*s\n", evt->data_len, (char *)evt->data);
+        break;
+
+    default:
+        break;
+    }
+    return ESP_OK;
+}
+
+static void post_rest_function()
+{
+    esp_http_client_config_t config_post = {
+        .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
+        .method = HTTP_METHOD_PUT,
+        //.cert_pem = (const char *)cert_start,               // change
+        //.client_cert_pem = (const char *)certificate_start, // change
+        //.client_key_pem = (const char *)private_start,      // change
+        .event_handler = client_event_post_handler};
+
+    esp_http_client_handle_t client = esp_http_client_init(&config_post);
+
+    char *post_data = "{\"irs\":\"1010\"}";
+    esp_http_client_set_post_field(client, post_data, strlen(post_data));
+    esp_http_client_set_header(client, "Content-Type", "application/json");
+
+    esp_http_client_perform(client);
+    esp_http_client_cleanup(client);
+}
+
 void app_main(void)
 {
     esp_err_t status = WIFI_FAILURE;
@@ -231,7 +259,7 @@ void app_main(void)
         ESP_LOGI(TAG, "Failed to associate to AP, dying...");
         return;
     }
-
+    post_rest_function();
     status = connect_tcp_server();
     if (TCP_SUCCESS != status)
     {
