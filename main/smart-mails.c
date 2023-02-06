@@ -7,7 +7,7 @@
 #include "freertos/event_groups.h"
 #include "freertos/timers.h"
 #include "esp_wifi.h"
-#include "esp_event.h"
+// #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 
@@ -34,6 +34,7 @@ static int s_retry_num = 0;
 // task tag
 static const char *TAG = "WIFI";
 /** FUNCTIONS **/
+// static const char *TAG2 = "POST_FUNCTION";
 
 // event handler for wifi events
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
@@ -166,44 +167,6 @@ esp_err_t connect_wifi()
 
 // may replace in future.
 // connect to the server and return the result
-esp_err_t connect_tcp_server(void)
-{
-    struct sockaddr_in serverInfo = {0};
-    char readBuffer[1024] = {0};
-
-    serverInfo.sin_family = AF_INET;
-    serverInfo.sin_addr.s_addr = 0x689b933b; // bin: 0000.0000.0000.00000000, ipaddr: 0.0.0.000
-    serverInfo.sin_port = htons(443);        // HTTPS port is usually 443
-
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
-        ESP_LOGE(TAG, "Failed to create a socket..?");
-        return TCP_FAILURE;
-    }
-
-    if (connect(sock, (struct sockaddr *)&serverInfo, sizeof(serverInfo)) != 0)
-    {
-        ESP_LOGE(TAG, "Failed to connect to %s!", inet_ntoa(serverInfo.sin_addr.s_addr));
-        close(sock);
-        return TCP_FAILURE;
-    }
-
-    ESP_LOGI(TAG, "Connected to TCP server.");
-    bzero(readBuffer, sizeof(readBuffer));
-    int r = read(sock, readBuffer, sizeof(readBuffer) - 1);
-    for (int i = 0; i < r; i++)
-    {
-        putchar(readBuffer[i]);
-    }
-
-    if (strcmp(readBuffer, "HELLO") == 0)
-    {
-        ESP_LOGI(TAG, "WE DID IT!");
-    }
-
-    return TCP_SUCCESS;
-}
 
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
 {
@@ -222,16 +185,15 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
 static void post_rest_function()
 {
     esp_http_client_config_t config_post = {
+        .auth_type = HTTP_AUTH_TYPE_NONE,
+        .skip_cert_common_name_check = true,
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .method = HTTP_METHOD_PUT,
-        //.cert_pem = (const char *)cert_start,               // change
-        //.client_cert_pem = (const char *)certificate_start, // change
-        //.client_key_pem = (const char *)private_start,      // change
         .event_handler = client_event_post_handler};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
 
-    char *post_data = "{\"irs\":\"1010\"}";
+    char *post_data = "{\"irs\":\"1011\"}";
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
@@ -260,10 +222,4 @@ void app_main(void)
         return;
     }
     post_rest_function();
-    status = connect_tcp_server();
-    if (TCP_SUCCESS != status)
-    {
-        ESP_LOGI(TAG, "Failed to connect to remote server, dying...");
-        return;
-    }
 }
