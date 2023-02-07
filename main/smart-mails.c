@@ -114,10 +114,10 @@ esp_err_t connect_wifi()
     /** START THE WIFI DRIVER **/
     wifi_config_t wifi_config = {
         .sta = {
-            // .ssid = "loberbaum F2",
-            // .password = "yl##$$%1973",
-            .ssid = "OnePlus 8 Pro",
-            .password = "21122002",
+            .ssid = "loberbaum F2",
+            .password = "yl##$$%1973",
+            // .ssid = "OnePlus 8 Pro",
+            // .password = "21122002",
             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
             .pmf_cfg = {
                 .capable = true,
@@ -189,12 +189,12 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
 static void post_rest_function()
 {
     esp_http_client_config_t config_post = {
-        .auth_type = HTTP_AUTH_TYPE_NONE,
-        .skip_cert_common_name_check = true,
+        // .auth_type = HTTP_AUTH_TYPE_NONE,
+        // .skip_cert_common_name_check = true,
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .method = HTTP_METHOD_PUT,
-        .transport_type = HTTP_TRANSPORT_OVER_TCP,
-        .use_global_ca_store = 1,
+        // .transport_type = HTTP_TRANSPORT_OVER_TCP,
+        // .use_global_ca_store = 1,
         .event_handler = client_event_post_handler};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
