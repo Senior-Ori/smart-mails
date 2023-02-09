@@ -1,0 +1,42 @@
+CMake Error at C:/Users/ori88/esp/esp-idf/tools/cmake/component.cmake:224 (message):
+  CMake Warning (dev) at build_properties.temp.cmake:8:
+
+    Syntax Warning in cmake code at column 51
+
+  
+
+    Argument not separated from preceding token by whitespace.
+
+  Call Stack (most recent call first):
+
+    C:/Users/ori88/esp/esp-idf/tools/cmake/scripts/component_get_requirements.cmake:3 (include)
+
+  This warning is for project developers.  Use -Wno-dev to suppress it.
+
+  
+
+  CMake Error at
+  C:/esp/esp-idf/projects/smart-mails/components/curl/CMakeLists.txt:66
+  (include):
+
+    include could not find requested file:
+
+  
+
+      Utilities
+
+  Call Stack (most recent call first):
+
+    C:/Users/ori88/esp/esp-idf/tools/cmake/scripts/component_get_requirements.cmake:106 (include)
+    C:/Users/ori88/esp/esp-idf/tools/cmake/scripts/component_get_requirements.cmake:124 (__component_get_requirements)
+
+  
+
+  
+
+Call Stack (most recent call first):
+  C:/Users/ori88/esp/esp-idf/tools/cmake/build.cmake:553 (__component_get_requirements)
+  C:/Users/ori88/esp/esp-idf/tools/cmake/project.cmake:440 (idf_build_process)
+  CMakeLists.txt:8 (project)
+
+

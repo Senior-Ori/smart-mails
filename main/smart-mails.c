@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/param.h>
-
+#include "curl/curl.h"
 #include "esp_tls.h"
 
 #include "freertos/FreeRTOS.h"
@@ -171,7 +171,7 @@ esp_err_t connect_wifi()
 
 // may replace in future.
 // connect to the server and return the result
-
+/*
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
 {
     switch (evt->event_id)
@@ -185,7 +185,7 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
     }
     return ESP_OK;
 }
-/*
+
 static void post_rest_function()
 {
     esp_http_client_config_t config_post = {
@@ -227,5 +227,5 @@ void app_main(void)
         ESP_LOGI(TAG, "Failed to associate to AP, dying...");
         return;
     }
-    post_rest_function();
+    // post_rest_function();
 }
