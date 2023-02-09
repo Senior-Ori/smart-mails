@@ -12,9 +12,7 @@
     "esp_system.h": "c",
     "param.h": "c",
     "esp_http_client.h": "c",
-    "esp_tls.h": "c",
-    "sdkconfig.h": "c",
-    "timers.h": "c"
+    "esp_tls.h": "c"
   },
   "idf.adapterTargetName": "esp32"
 }
