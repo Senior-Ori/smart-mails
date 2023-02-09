@@ -185,7 +185,7 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
     }
     return ESP_OK;
 }
-
+/*
 static void post_rest_function()
 {
     esp_http_client_config_t config_post = {
@@ -206,7 +206,7 @@ static void post_rest_function()
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
 }
-
+*/
 void app_main(void)
 {
     esp_err_t status = WIFI_FAILURE;
