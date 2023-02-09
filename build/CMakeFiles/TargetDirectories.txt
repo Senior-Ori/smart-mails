@@ -594,3 +594,10 @@ C:/esp/esp-idf/projects/smart-mails/build/esp-idf/main/CMakeFiles/list_install_c
 C:/esp/esp-idf/projects/smart-mails/build/esp-idf/main/CMakeFiles/install.dir
 C:/esp/esp-idf/projects/smart-mails/build/esp-idf/main/CMakeFiles/install/local.dir
 C:/esp/esp-idf/projects/smart-mails/build/esp-idf/main/CMakeFiles/install/strip.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/__idf_testing.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/edit_cache.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/rebuild_cache.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/list_install_components.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/install.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/install/local.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/install/strip.dir

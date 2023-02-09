@@ -392,3 +392,8 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("C:/esp/esp-idf/projects/smart-mails/build/esp-idf/main/cmake_install.cmake")
 endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/cmake_install.cmake")
+endif()
+
