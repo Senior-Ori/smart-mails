@@ -173,7 +173,7 @@ esp_err_t connect_wifi()
 
 // may replace in future.
 // connect to the server and return the result
-/*
+
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
 {
     switch (evt->event_id)
@@ -195,6 +195,7 @@ static void post_rest_function()
         // .skip_cert_common_name_check = true,
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .method = HTTP_METHOD_PUT,
+        .use_secure_element = false,
         // .transport_type = HTTP_TRANSPORT_OVER_TCP,
         // .use_global_ca_store = 1,
         .event_handler = client_event_post_handler};
@@ -208,7 +209,7 @@ static void post_rest_function()
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
 }
-*/
+
 void app_main(void)
 {
     esp_err_t status = WIFI_FAILURE;
