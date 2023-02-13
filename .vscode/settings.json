@@ -14,7 +14,11 @@
     "esp_http_client.h": "c",
     "esp_tls.h": "c",
     "testing.h": "c",
-    "my_data.h": "c"
+    "my_data.h": "c",
+    "esp_err.h": "c",
+    "stdlib.h": "c",
+    "esp_compiler.h": "c",
+    "assert.h": "c"
   },
   "idf.adapterTargetName": "esp32"
 }
