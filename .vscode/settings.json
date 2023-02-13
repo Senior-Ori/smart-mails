@@ -13,7 +13,8 @@
     "param.h": "c",
     "esp_http_client.h": "c",
     "esp_tls.h": "c",
-    "testing.h": "c"
+    "testing.h": "c",
+    "my_data.h": "c"
   },
   "idf.adapterTargetName": "esp32"
 }

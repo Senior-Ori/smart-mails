@@ -1,24 +1,17 @@
+// HTTP Client - FreeRTOS ESP IDF - POST
+
 #include <stdio.h>
 #include <string.h>
-#include <sys/param.h>
-// #include "curl/curl.h"
-#include "testing.h"
-
-#include "esp_tls.h"
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/event_groups.h"
 #include "freertos/timers.h"
+#include "freertos/event_groups.h"
 #include "esp_wifi.h"
-// #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
-
-#include "esp_http_client.h"
-#include "esp_http_server.h"
 #include "esp_netif.h"
-#include "cJSON.h"
+#include "esp_http_client.h"
+#include "my_data.h"
 
 /** DEFINES **/
 #define WIFI_SUCCESS 1 << 0
@@ -116,8 +109,8 @@ esp_err_t connect_wifi()
     /** START THE WIFI DRIVER **/
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = "loberbaum F2",
-            .password = "yl##$$%1973",
+            .ssid = SSID,
+            .password = PASS,
             // .ssid = "OnePlus 8 Pro",
             // .password = "21122002",
             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
@@ -171,9 +164,6 @@ esp_err_t connect_wifi()
     return status;
 }
 
-// may replace in future.
-// connect to the server and return the result
-
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
 {
     switch (evt->event_id)
@@ -191,13 +181,8 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
 static void post_rest_function()
 {
     esp_http_client_config_t config_post = {
-        // .auth_type = HTTP_AUTH_TYPE_NONE,
-        // .skip_cert_common_name_check = true,
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .method = HTTP_METHOD_PUT,
-        .use_secure_element = false,
-        // .transport_type = HTTP_TRANSPORT_OVER_TCP,
-        // .use_global_ca_store = 1,
         .event_handler = client_event_post_handler};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
@@ -209,9 +194,24 @@ static void post_rest_function()
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
 }
+char *update_and_return_string(int arr[4], int num1, int num2, int num3, int num4)
+{
+    arr[0] = num1;
+    arr[1] = num2;
+    arr[2] = num3;
+    arr[3] = num4;
+
+    char str[100];
+    sprintf(str, "%d %d %d %d", arr[0], arr[1], arr[2], arr[3]);
+
+    char *p = (char *)malloc(strlen(str) + 1);
+    strcpy(p, str);
+    return p;
+}
 
 void app_main(void)
 {
+    int arr[4] = {0};
     esp_err_t status = WIFI_FAILURE;
 
     // initialize storage
@@ -230,5 +230,17 @@ void app_main(void)
         ESP_LOGI(TAG, "Failed to associate to AP, dying...");
         return;
     }
-    // post_rest_function();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    while (true)
+    {
+        char *str = update_and_return_string(arr, 12, 34, 56, 78);
+        printf("%s\n", str);
+        free(str);
+        printf("WIFI was initiated ...........\n\n");
+
+        post_rest_function();
+
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
 }
