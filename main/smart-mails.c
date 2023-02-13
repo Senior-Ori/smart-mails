@@ -33,6 +33,8 @@
 #define HT12E_TE 23
 
 /** GLOBALS **/
+int ir_sensor_data = 0;
+int previous_ir_sensor_data = 0;
 
 // event group to contain status information
 static EventGroupHandle_t wifi_event_group;
@@ -190,7 +192,7 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
     return ESP_OK;
 }
 
-static void post_rest_function()
+static void post_rest_function(char *str)
 {
     esp_http_client_config_t config_post = {
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
@@ -198,27 +200,13 @@ static void post_rest_function()
         .event_handler = client_event_post_handler};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
-
-    char *post_data = "{\"irs\":\"1011\"}";
+    char post_data[100];
+    sprintf(post_data, "{\"irs\":\"%s\"}", "test");
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
-}
-char *update_and_return_string(int arr[4], int num1, int num2, int num3, int num4)
-{
-    arr[0] = num1;
-    arr[1] = num2;
-    arr[2] = num3;
-    arr[3] = num4;
-
-    char str[100];
-    sprintf(str, "%d %d %d %d", arr[0], arr[1], arr[2], arr[3]);
-
-    char *p = (char *)malloc(strlen(str) + 1);
-    strcpy(p, str);
-    return p;
 }
 
 void setup_gpio()
@@ -240,29 +228,39 @@ void setup_gpio()
     io_conf.pull_up_en = 0;
     gpio_config(&io_conf);
 }
+char *int_to_string(int num)
+{
+    char str[20];
+    sprintf(str, "%d", num);
 
-void send_rf_data()
+    char *p = (char *)malloc(strlen(str) + 1);
+    strcpy(p, str);
+    return p;
+}
+void send_data()
 {
     // send the data of the IR sensors to the HT12E
-    int ir_sensor_data = 0;
-    ir_sensor_data |= gpio_get_level(IR_SENSOR_1) << 0;
-    ir_sensor_data |= gpio_get_level(IR_SENSOR_2) << 1;
-    ir_sensor_data |= gpio_get_level(IR_SENSOR_3) << 2;
-    ir_sensor_data |= gpio_get_level(IR_SENSOR_4) << 3;
+    ir_sensor_data = (gpio_get_level(IR_SENSOR_1) << 0) | (gpio_get_level(IR_SENSOR_2) << 1) |
+                     (gpio_get_level(IR_SENSOR_3) << 2) | (gpio_get_level(IR_SENSOR_4) << 3);
 
     // send the data to the HT12E
-    gpio_set_level(HT12E_D0, (ir_sensor_data >> 0) & 0x1);
-    gpio_set_level(HT12E_D1, (ir_sensor_data >> 1) & 0x1);
-    gpio_set_level(HT12E_D2, (ir_sensor_data >> 2) & 0x1);
-    gpio_set_level(HT12E_D3, (ir_sensor_data >> 3) & 0x1);
-    gpio_set_level(HT12E_TE, 1);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    gpio_set_level(HT12E_TE, 0);
+    if (ir_sensor_data != previous_ir_sensor_data)
+    {
+        gpio_set_level(HT12E_D0, (ir_sensor_data >> 0) & 0x1);
+        gpio_set_level(HT12E_D1, (ir_sensor_data >> 1) & 0x1);
+        gpio_set_level(HT12E_D2, (ir_sensor_data >> 2) & 0x1);
+        gpio_set_level(HT12E_D3, (ir_sensor_data >> 3) & 0x1);
+        gpio_set_level(HT12E_TE, 1);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        gpio_set_level(HT12E_TE, 0);
+        post_rest_function(int_to_string(ir_sensor_data));
+        previous_ir_sensor_data = ir_sensor_data;
+    }
 }
 
 void app_main(void)
 {
-    int arr[4] = {0};
+    setup_gpio();
     esp_err_t status = WIFI_FAILURE;
 
     // initialize storage
@@ -281,17 +279,14 @@ void app_main(void)
         ESP_LOGI(TAG, "Failed to associate to AP, dying...");
         return;
     }
+    printf("WIFI was initiated ...........\n\n");
 
     vTaskDelay(2000 / portTICK_PERIOD_MS);
+
     while (true)
     {
-        char *str = update_and_return_string(arr, 12, 34, 56, 78);
-        printf("%s\n", str);
-        free(str);
-        printf("WIFI was initiated ...........\n\n");
+        send_data();
 
-        post_rest_function();
-
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
