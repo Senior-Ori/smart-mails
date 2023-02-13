@@ -33,8 +33,8 @@
 #define HT12E_TE 23
 
 /** GLOBALS **/
-int ir_sensor_data = 0;
-int previous_ir_sensor_data = 0;
+int ir_sensor_data[4] = {0, 0, 0, 0};
+int previous_ir_sensor_data[4] = {1, 1, 1, 1};
 
 // event group to contain status information
 static EventGroupHandle_t wifi_event_group;
@@ -201,12 +201,13 @@ static void post_rest_function(char *str)
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
     char post_data[100];
-    sprintf(post_data, "{\"irs\":\"%s\"}", "test");
+    sprintf(post_data, "{\"irs\":\"%s\"}", str);
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
+    ESP_LOGI(TAG, "executed: post_rest_function!");
 }
 
 void setup_gpio()
@@ -228,34 +229,45 @@ void setup_gpio()
     io_conf.pull_up_en = 0;
     gpio_config(&io_conf);
 }
-char *int_to_string(int num)
-{
-    char str[20];
-    sprintf(str, "%d", num);
 
-    char *p = (char *)malloc(strlen(str) + 1);
-    strcpy(p, str);
-    return p;
+char *numbers_to_string(int a, int b, int c, int d)
+{
+    static char result[4];
+    result[0] = a + '0';
+    result[1] = b + '0';
+    result[2] = c + '0';
+    result[3] = d + '0';
+    return result;
 }
+
 void send_data()
 {
     // send the data of the IR sensors to the HT12E
-    ir_sensor_data = (gpio_get_level(IR_SENSOR_1) << 0) | (gpio_get_level(IR_SENSOR_2) << 1) |
-                     (gpio_get_level(IR_SENSOR_3) << 2) | (gpio_get_level(IR_SENSOR_4) << 3);
+    ir_sensor_data[0] = gpio_get_level(IR_SENSOR_1);
+    ir_sensor_data[1] = gpio_get_level(IR_SENSOR_2);
+    ir_sensor_data[2] = gpio_get_level(IR_SENSOR_3);
+    ir_sensor_data[3] = gpio_get_level(IR_SENSOR_4);
 
     // send the data to the HT12E
-    if (ir_sensor_data != previous_ir_sensor_data)
+    for (int j = 0; j < 4; j++)
     {
-        gpio_set_level(HT12E_D0, (ir_sensor_data >> 0) & 0x1);
-        gpio_set_level(HT12E_D1, (ir_sensor_data >> 1) & 0x1);
-        gpio_set_level(HT12E_D2, (ir_sensor_data >> 2) & 0x1);
-        gpio_set_level(HT12E_D3, (ir_sensor_data >> 3) & 0x1);
-        gpio_set_level(HT12E_TE, 1);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        gpio_set_level(HT12E_TE, 0);
-        post_rest_function(int_to_string(ir_sensor_data));
-        previous_ir_sensor_data = ir_sensor_data;
+        if (ir_sensor_data[j] != previous_ir_sensor_data[j])
+        {
+            gpio_set_level(HT12E_D0, ir_sensor_data[0]);
+            gpio_set_level(HT12E_D1, ir_sensor_data[1]);
+            gpio_set_level(HT12E_D2, ir_sensor_data[2]);
+            gpio_set_level(HT12E_D3, ir_sensor_data[3]);
+            gpio_set_level(HT12E_TE, 1);
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+            gpio_set_level(HT12E_TE, 0);
+            post_rest_function(numbers_to_string(ir_sensor_data[0], ir_sensor_data[1], ir_sensor_data[2], ir_sensor_data[3]));
+            for (int i = 0; i < 4; i++)
+            {
+                previous_ir_sensor_data[i] = ir_sensor_data[i];
+            }
+        }
     }
+    ESP_LOGI(TAG, "executed: send_data!");
 }
 
 void app_main(void)
