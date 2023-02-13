@@ -187,7 +187,7 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
         break;
 
     default:
-        printf("A problem has been found!\n");
+        ESP_LOGI("HTTP", "UNEXPECTED REQUEST ERROR");
         break;
     }
     return ESP_OK;
@@ -208,7 +208,7 @@ static void post_rest_function(char *str)
 
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
-    ESP_LOGI(TAG, "executed: post_rest_function!");
+    ESP_LOGI("executed:", "post_rest_function!");
 }
 
 void setup_gpio()
@@ -266,9 +266,10 @@ void send_data()
             {
                 previous_ir_sensor_data[i] = ir_sensor_data[i];
             }
+            break;
         }
     }
-    ESP_LOGI(TAG, "executed: send_data!");
+    ESP_LOGI("executed:", "send_data!");
 }
 
 void app_main(void)
