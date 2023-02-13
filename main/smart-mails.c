@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <driver/gpio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/timers.h"
@@ -19,6 +20,17 @@
 #define TCP_SUCCESS 1 << 0
 #define TCP_FAILURE 1 << 1
 #define MAX_FAILURES 10
+
+/** DEFINE GIOS**/
+#define IR_SENSOR_1 32
+#define IR_SENSOR_2 33
+#define IR_SENSOR_3 34
+#define IR_SENSOR_4 35
+#define HT12E_D0 18
+#define HT12E_D1 19
+#define HT12E_D2 21
+#define HT12E_D3 22
+#define HT12E_TE 23
 
 /** GLOBALS **/
 
@@ -207,6 +219,45 @@ char *update_and_return_string(int arr[4], int num1, int num2, int num3, int num
     char *p = (char *)malloc(strlen(str) + 1);
     strcpy(p, str);
     return p;
+}
+
+void setup_gpio()
+{
+    // configure the IR sensor pins as inputs
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pin_bit_mask = (1ULL << IR_SENSOR_1) | (1ULL << IR_SENSOR_2) | (1ULL << IR_SENSOR_3) | (1ULL << IR_SENSOR_4);
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 0;
+    gpio_config(&io_conf);
+
+    // configure the HT12E data pins as outputs
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    io_conf.pin_bit_mask = (1ULL << HT12E_D0) | (1ULL << HT12E_D1) | (1ULL << HT12E_D2) | (1ULL << HT12E_D3) | (1ULL << HT12E_TE);
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 0;
+    gpio_config(&io_conf);
+}
+
+void send_rf_data()
+{
+    // send the data of the IR sensors to the HT12E
+    int ir_sensor_data = 0;
+    ir_sensor_data |= gpio_get_level(IR_SENSOR_1) << 0;
+    ir_sensor_data |= gpio_get_level(IR_SENSOR_2) << 1;
+    ir_sensor_data |= gpio_get_level(IR_SENSOR_3) << 2;
+    ir_sensor_data |= gpio_get_level(IR_SENSOR_4) << 3;
+
+    // send the data to the HT12E
+    gpio_set_level(HT12E_D0, (ir_sensor_data >> 0) & 0x1);
+    gpio_set_level(HT12E_D1, (ir_sensor_data >> 1) & 0x1);
+    gpio_set_level(HT12E_D2, (ir_sensor_data >> 2) & 0x1);
+    gpio_set_level(HT12E_D3, (ir_sensor_data >> 3) & 0x1);
+    gpio_set_level(HT12E_TE, 1);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    gpio_set_level(HT12E_TE, 0);
 }
 
 void app_main(void)
