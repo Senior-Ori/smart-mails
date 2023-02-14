@@ -125,8 +125,7 @@ esp_err_t connect_wifi()
         .sta = {
             .ssid = SSID,
             .password = PASS,
-            // .ssid = "OnePlus 8 Pro",
-            // .password = "21122002",
+
             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
             .pmf_cfg = {
                 .capable = true,
@@ -187,7 +186,6 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
         break;
 
     default:
-        ESP_LOGI("HTTP", "UNEXPECTED REQUEST ERROR");
         break;
     }
     return ESP_OK;
@@ -201,14 +199,14 @@ static void post_rest_function(char *str)
         .event_handler = client_event_post_handler};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
-    char post_data[100];
+    char post_data[32];
     sprintf(post_data, "{\"irs\":\"%s\"}", str);
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
-    esp_http_client_perform(client);
+    esp_err_t err = esp_http_client_perform(client);
     esp_http_client_cleanup(client);
-    ESP_LOGI("executed:", "post_rest_function!");
+    ESP_LOGI(__func__, "Error: %d %s", err, esp_err_to_name(err));
 }
 
 void setup_gpio()
@@ -241,38 +239,47 @@ char *numbers_to_string(int a, int b, int c, int d)
     return result;
 }
 
-void send_data()
+void transmit_data()
 {
-    // send the data of the IR sensors to the HT12E
-    ir_sensor_data[0] = gpio_get_level(IR_SENSOR_1);
-    ir_sensor_data[1] = gpio_get_level(IR_SENSOR_2);
-    ir_sensor_data[2] = gpio_get_level(IR_SENSOR_3);
-    ir_sensor_data[3] = gpio_get_level(IR_SENSOR_4);
+    while (true)
+    {
+        // send the data of the IR sensors to the HT12E
+        ir_sensor_data[0] = gpio_get_level(IR_SENSOR_1);
+        ir_sensor_data[1] = gpio_get_level(IR_SENSOR_2);
+        ir_sensor_data[2] = gpio_get_level(IR_SENSOR_3);
+        ir_sensor_data[3] = gpio_get_level(IR_SENSOR_4);
 
-    // send the data to the HT12E
-    int flag = 1;
-    for (int j = 0; j < 4; j++)
-    {
-        if (ir_sensor_data[j] != previous_ir_sensor_data[j])
-            flag = 0;
-    }
-    if (flag == 0)
-    {
-        gpio_set_level(HT12E_D0, ir_sensor_data[0]);
-        gpio_set_level(HT12E_D1, ir_sensor_data[1]);
-        gpio_set_level(HT12E_D2, ir_sensor_data[2]);
-        gpio_set_level(HT12E_D3, ir_sensor_data[3]);
-        gpio_set_level(HT12E_TE, 1);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        gpio_set_level(HT12E_TE, 0);
-        post_rest_function(numbers_to_string(ir_sensor_data[0], ir_sensor_data[1], ir_sensor_data[2], ir_sensor_data[3]));
-        for (int i = 0; i < 4; i++)
+        // send the data to the HT12E
+        int flag = 1;
+        for (int j = 0; j < 4; j++)
         {
-            previous_ir_sensor_data[i] = ir_sensor_data[i];
+            if (ir_sensor_data[j] != previous_ir_sensor_data[j])
+            {
+                flag = 0;
+                break;
+            }
         }
-    }
+        if (flag == 0)
+        {
+            {
+                gpio_set_level(HT12E_D0, ir_sensor_data[0]);
+                gpio_set_level(HT12E_D1, ir_sensor_data[1]);
+                gpio_set_level(HT12E_D2, ir_sensor_data[2]);
+                gpio_set_level(HT12E_D3, ir_sensor_data[3]);
+                gpio_set_level(HT12E_TE, 1);
+                vTaskDelay(100 / portTICK_PERIOD_MS);
+                gpio_set_level(HT12E_TE, 0);
+            }
+            post_rest_function(numbers_to_string(ir_sensor_data[0], ir_sensor_data[1], ir_sensor_data[2], ir_sensor_data[3]));
+            for (int i = 0; i < 4; i++)
+            {
+                previous_ir_sensor_data[i] = ir_sensor_data[i];
+            }
+        }
 
-    ESP_LOGI("executed:", "send_data!");
+        ESP_LOGI("executed", "transmit_data!");
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
 }
 
 void app_main(void)
@@ -300,10 +307,5 @@ void app_main(void)
 
     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
-    while (true)
-    {
-        send_data();
-
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-    }
+    xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 3, NULL);
 }
