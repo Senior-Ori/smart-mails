@@ -54,62 +54,8 @@ static void initialise_wifi(void);
 static void smartconfig_example_task(void *parm);
 static void post_rest_function(char *str);
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt);
-
-static void wifi_event_handler(void *arg, esp_event_base_t event_base,
-                               int32_t event_id, void *event_data)
-{
-    if (event_id == WIFI_EVENT_AP_STACONNECTED)
-    {
-        wifi_event_ap_staconnected_t *event = (wifi_event_ap_staconnected_t *)event_data;
-        ESP_LOGI("wifi softAP", "station " MACSTR " join, AID=%d", MAC2STR(event->mac), event->aid);
-    }
-    else if (event_id == WIFI_EVENT_AP_STADISCONNECTED)
-    {
-        wifi_event_ap_stadisconnected_t *event = (wifi_event_ap_stadisconnected_t *)event_data;
-        ESP_LOGI("wifi softAP", "station " MACSTR " leave, AID=%d", MAC2STR(event->mac), event->aid);
-    }
-}
-
-void wifi_init_softap(char *wifi_user, char *wifi_pass)
-{
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    esp_netif_create_default_wifi_ap();
-
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                                                        ESP_EVENT_ANY_ID,
-                                                        &wifi_event_handler,
-                                                        NULL,
-                                                        NULL));
-
-    wifi_config_t wifi_config = {
-        .ap = {
-            .ssid = wifi_user,
-            .ssid_len = strlen(wifi_user),
-            .channel = EXAMPLE_ESP_WIFI_CHANNEL,
-            .password = wifi_pass,
-            .max_connection = EXAMPLE_MAX_STA_CONN,
-            .authmode = WIFI_AUTH_WPA_WPA2_PSK,
-            .pmf_cfg = {
-                .required = false,
-            },
-        },
-    };
-    if (strlen(wifi_pass) == 0)
-    {
-        wifi_config.ap.authmode = WIFI_AUTH_OPEN;
-    }
-
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
-    ESP_ERROR_CHECK(esp_wifi_start());
-
-    ESP_LOGI("wifi softAP", "wifi_init_softap finished. SSID:%s password:%s channel:%d",
-             wifi_user, wifi_pass, EXAMPLE_ESP_WIFI_CHANNEL);
-}
+static void wifi_event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+void wifi_connection(char *str1, char *str2);
 
 void app_main(void)
 {
@@ -123,6 +69,49 @@ void app_main(void)
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     ESP_LOGI("transmit_data", "initiated ...........");
     xTaskCreate(transmit_data, "transmit_data", 2048, NULL, 4, NULL);
+}
+
+static void wifi_event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+{
+    switch (event_id)
+    {
+    case WIFI_EVENT_STA_START:
+        printf("WiFi connecting ... \n");
+        break;
+    case WIFI_EVENT_STA_CONNECTED:
+        printf("WiFi connected ... \n");
+        break;
+    case WIFI_EVENT_STA_DISCONNECTED:
+        printf("WiFi lost connection ... \n");
+        break;
+    case IP_EVENT_STA_GOT_IP:
+        printf("WiFi got IP ... \n\n");
+        break;
+    default:
+        break;
+    }
+}
+
+void wifi_connection(char *str1, char *str2)
+{
+    // 1 - Wi-Fi/LwIP Init Phase
+    esp_netif_init();                    // TCP/IP initiation 					s1.1
+    esp_event_loop_create_default();     // event loop 			                s1.2
+    esp_netif_create_default_wifi_sta(); // WiFi station 	                    s1.3
+    wifi_init_config_t wifi_initiation = WIFI_INIT_CONFIG_DEFAULT();
+    esp_wifi_init(&wifi_initiation); // 					                    s1.4
+    // 2 - Wi-Fi Configuration Phase
+    esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, wifi_event_handler, NULL);
+    esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, wifi_event_handler, NULL);
+    wifi_config_t wifi_configuration = {
+        .sta = {
+            .ssid = SSID,
+            .password = PASS}};
+    esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_configuration);
+    // 3 - Wi-Fi Start Phase
+    esp_wifi_start();
+    // 4- Wi-Fi Connect Phase
+    esp_wifi_connect();
 }
 
 char *combine_strings(char *str1, char *str2)
@@ -274,6 +263,10 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
+void connect_wifi(char *wifi_user, char *wifi_pass)
+{
+    esp_netif_init();
+}
 static void initialise_wifi(void)
 {
     nvs_handle_t my_handle;
@@ -285,6 +278,8 @@ static void initialise_wifi(void)
     nvs_get_str(my_handle, "data", server_name, &required_size);
 
     separate_strings(server_name, &wifi_pass, &wifi_user);
+    ESP_LOGI("transmit_data", "ESP_WIFI_MODE_AP");
+    // login wifi cred
 
     ESP_ERROR_CHECK(esp_netif_init());
     s_wifi_event_group = xEventGroupCreate();
