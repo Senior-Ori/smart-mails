@@ -13,6 +13,8 @@
 #include "esp_netif.h"
 #include "esp_http_client.h"
 #include "esp_smartconfig.h"
+#include "lwip/err.h"
+#include "lwip/sys.h"
 // #include "my_data.h"
 
 /** DEFINE GIOS**/
@@ -29,6 +31,8 @@
 /** GLOBALS **/
 int ir_sensor_data[4] = {0, 0, 0, 0};
 int previous_ir_sensor_data[4] = {0, 0, 0, 0};
+char *wifi_pass = NULL;
+char *wifi_user = NULL;
 
 /* FreeRTOS event group to signal when we are connected & ready to make a request */
 static EventGroupHandle_t s_wifi_event_group;
@@ -40,8 +44,6 @@ static const int CONNECTED_BIT = BIT0;
 static const int ESPTOUCH_DONE_BIT = BIT1;
 static const char *TAG = "smartconfig_example";
 
-static void smartconfig_example_task(void *parm);
-
 void setup_gpio();
 void transmit_data();
 char *combine_strings(char *str1, char *str2);
@@ -50,8 +52,64 @@ char *numbers_to_string(int a, int b, int c, int d);
 static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 static void initialise_wifi(void);
 static void smartconfig_example_task(void *parm);
-esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt);
 static void post_rest_function(char *str);
+esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt);
+
+static void wifi_event_handler(void *arg, esp_event_base_t event_base,
+                               int32_t event_id, void *event_data)
+{
+    if (event_id == WIFI_EVENT_AP_STACONNECTED)
+    {
+        wifi_event_ap_staconnected_t *event = (wifi_event_ap_staconnected_t *)event_data;
+        ESP_LOGI("wifi softAP", "station " MACSTR " join, AID=%d", MAC2STR(event->mac), event->aid);
+    }
+    else if (event_id == WIFI_EVENT_AP_STADISCONNECTED)
+    {
+        wifi_event_ap_stadisconnected_t *event = (wifi_event_ap_stadisconnected_t *)event_data;
+        ESP_LOGI("wifi softAP", "station " MACSTR " leave, AID=%d", MAC2STR(event->mac), event->aid);
+    }
+}
+
+void wifi_init_softap(char *wifi_user, char *wifi_pass)
+{
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_create_default_wifi_ap();
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &wifi_event_handler,
+                                                        NULL,
+                                                        NULL));
+
+    wifi_config_t wifi_config = {
+        .ap = {
+            .ssid = wifi_user,
+            .ssid_len = strlen(wifi_user),
+            .channel = EXAMPLE_ESP_WIFI_CHANNEL,
+            .password = wifi_pass,
+            .max_connection = EXAMPLE_MAX_STA_CONN,
+            .authmode = WIFI_AUTH_WPA_WPA2_PSK,
+            .pmf_cfg = {
+                .required = false,
+            },
+        },
+    };
+    if (strlen(wifi_pass) == 0)
+    {
+        wifi_config.ap.authmode = WIFI_AUTH_OPEN;
+    }
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    ESP_LOGI("wifi softAP", "wifi_init_softap finished. SSID:%s password:%s channel:%d",
+             wifi_user, wifi_pass, EXAMPLE_ESP_WIFI_CHANNEL);
+}
 
 void app_main(void)
 {
@@ -82,6 +140,28 @@ char *combine_strings(char *str1, char *str2)
 
     sprintf(combined_str, "%d:%d:%s%s", len1, len2, str1, str2);
     return combined_str;
+    /*
+    int main()
+    {
+        char* str1 = "Ori";
+        char* str2 = "Lober";
+        char* combined_str = combine_strings(str1, str2);
+        printf("Combined string: %s\n", combined_str);
+
+        char* separated_str1 = NULL;
+        char* separated_str2 = NULL;
+        separate_strings(combined_str, &separated_str1, &separated_str2);
+        printf("Separated string 1: %s\n", separated_str1);
+        printf("Separated string 2: %s\n", separated_str2);
+
+        // free memory
+        free(combined_str);
+        free(separated_str1);
+        free(separated_str2);
+
+        return 0;
+    }
+    */
 }
 
 void separate_strings(char *combined_str, char **str1, char **str2)
@@ -203,7 +283,8 @@ static void initialise_wifi(void)
     nvs_get_str(my_handle, "data", NULL, &required_size);
     char *server_name = malloc(required_size);
     nvs_get_str(my_handle, "data", server_name, &required_size);
-    printf("Read data: %s\n", server_name);
+
+    separate_strings(server_name, &wifi_pass, &wifi_user);
 
     ESP_ERROR_CHECK(esp_netif_init());
     s_wifi_event_group = xEventGroupCreate();
