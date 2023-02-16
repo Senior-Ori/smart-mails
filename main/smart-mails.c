@@ -198,6 +198,7 @@ static void post_rest_function(char *str)
         .event_handler = client_event_post_handler,
         .is_async = true,
         .skip_cert_common_name_check = true,
+        .max_redirection_count = 0,
         .keep_alive_enable = true,
         .timeout_ms = 5000};
 
