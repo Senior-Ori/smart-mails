@@ -18,7 +18,9 @@
     "esp_err.h": "c",
     "stdlib.h": "c",
     "esp_compiler.h": "c",
-    "assert.h": "c"
+    "assert.h": "c",
+    "esp_smartconfig.h": "c",
+    "stdint.h": "c"
   },
   "idf.adapterTargetName": "esp32"
 }
