@@ -250,16 +250,16 @@ void transmit_data()
         ir_sensor_data[3] = gpio_get_level(IR_SENSOR_4);
 
         // send the data to the HT12E
-        int flag = 1;
+        int isChanged = 1;
         for (int j = 0; j < 4; j++)
         {
             if (ir_sensor_data[j] != previous_ir_sensor_data[j])
             {
-                flag = 0;
+                isChanged = 0;
                 break;
             }
         }
-        if (flag == 0)
+        if (isChanged == 0)
         {
             {
                 gpio_set_level(HT12E_D0, ir_sensor_data[0]);
