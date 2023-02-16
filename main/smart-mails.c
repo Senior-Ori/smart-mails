@@ -195,33 +195,40 @@ static void post_rest_function(char *str)
 {
     esp_http_client_config_t config_post = {
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
-        .method = HTTP_METHOD_PUT,
         .event_handler = client_event_post_handler,
         .is_async = true,
+        .skip_cert_common_name_check = true,
+        .keep_alive_enable = true,
         .timeout_ms = 5000};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
-    char post_data[20];
+    esp_err_t err;
+    char post_data[31];
     sprintf(post_data, "{\"irs\":\"%s\"}", str);
+    esp_http_client_set_method(client, HTTP_METHOD_PUT);
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
     // Send the HTTP request
-    esp_err_t err = esp_http_client_perform(client);
 
     // Check for errors
-    if (err != ESP_OK)
+    while (1)
     {
-        ESP_LOGE(__func__, "Failed to perform HTTP request: %s", esp_err_to_name(err));
-        esp_http_client_cleanup(client);
-        return;
+        err = esp_http_client_perform(client);
+        if (err != ESP_ERR_HTTP_EAGAIN)
+        {
+            break;
+        }
     }
-
-    // Get the HTTP response status code
-    int status_code = esp_http_client_get_status_code(client);
-    if (status_code != 200)
+    if (err == ESP_OK)
     {
-        ESP_LOGE(__func__, "HTTP request failed with status code %d", status_code);
+        ESP_LOGI(TAG, "HTTPS Status = %d, content_length = %" PRIu64,
+                 esp_http_client_get_status_code(client),
+                 esp_http_client_get_content_length(client));
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Error perform http request %s", esp_err_to_name(err));
     }
 
     // Cleanup the HTTP client
@@ -280,23 +287,20 @@ void transmit_data()
         }
         if (isChanged == 0)
         {
-            {
-                gpio_set_level(HT12E_D0, ir_sensor_data[0]);
-                gpio_set_level(HT12E_D1, ir_sensor_data[1]);
-                gpio_set_level(HT12E_D2, ir_sensor_data[2]);
-                gpio_set_level(HT12E_D3, ir_sensor_data[3]);
-                gpio_set_level(HT12E_TE, 1);
-                vTaskDelay(100 / portTICK_PERIOD_MS);
-                gpio_set_level(HT12E_TE, 0);
-            }
             post_rest_function(numbers_to_string(ir_sensor_data[0], ir_sensor_data[1], ir_sensor_data[2], ir_sensor_data[3]));
-            for (int i = 0; i < 4; i++)
-            {
-                previous_ir_sensor_data[i] = ir_sensor_data[i];
-            }
-        }
 
-        ESP_LOGI("executed", "transmit_data!");
+            gpio_set_level(HT12E_D0, ir_sensor_data[0]);
+            gpio_set_level(HT12E_D1, ir_sensor_data[1]);
+            gpio_set_level(HT12E_D2, ir_sensor_data[2]);
+            gpio_set_level(HT12E_D3, ir_sensor_data[3]);
+            gpio_set_level(HT12E_TE, 1);
+            vTaskDelay(100 / portTICK_PERIOD_MS);
+            gpio_set_level(HT12E_TE, 0);
+
+            for (int i = 0; i < 4; i++)
+                previous_ir_sensor_data[i] = ir_sensor_data[i];
+            ESP_LOGI("executed", "transmit_data!");
+        }
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
@@ -326,5 +330,5 @@ void app_main(void)
 
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     ESP_LOGI("transmit_data", "initiated ...........");
-    xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 3, NULL);
+    xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 5, NULL);
 }
