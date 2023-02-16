@@ -34,7 +34,7 @@
 
 /** GLOBALS **/
 int ir_sensor_data[4] = {0, 0, 0, 0};
-int previous_ir_sensor_data[4] = {1, 1, 1, 1};
+int previous_ir_sensor_data[4] = {0, 0, 0, 0};
 
 // event group to contain status information
 static EventGroupHandle_t wifi_event_group;
@@ -196,10 +196,12 @@ static void post_rest_function(char *str)
     esp_http_client_config_t config_post = {
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .method = HTTP_METHOD_PUT,
-        .event_handler = client_event_post_handler};
+        .event_handler = client_event_post_handler,
+        .is_async = true,
+        .timeout_ms = 5000};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
-    char post_data[32];
+    char post_data[20];
     sprintf(post_data, "{\"irs\":\"%s\"}", str);
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
@@ -320,9 +322,9 @@ void app_main(void)
         ESP_LOGI(TAG, "Failed to associate to AP, dying...");
         return;
     }
-    printf("WIFI was initiated ...........\n\n");
+    ESP_LOGI("WIFI", "initiated ...........");
 
     vTaskDelay(2000 / portTICK_PERIOD_MS);
-
+    ESP_LOGI("transmit_data", "initiated ...........");
     xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 3, NULL);
 }
