@@ -204,9 +204,26 @@ static void post_rest_function(char *str)
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
+    // Send the HTTP request
     esp_err_t err = esp_http_client_perform(client);
+
+    // Check for errors
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(__func__, "Failed to perform HTTP request: %s", esp_err_to_name(err));
+        esp_http_client_cleanup(client);
+        return;
+    }
+
+    // Get the HTTP response status code
+    int status_code = esp_http_client_get_status_code(client);
+    if (status_code != 200)
+    {
+        ESP_LOGE(__func__, "HTTP request failed with status code %d", status_code);
+    }
+
+    // Cleanup the HTTP client
     esp_http_client_cleanup(client);
-    ESP_LOGI(__func__, "Error: %d %s", err, esp_err_to_name(err));
 }
 
 void setup_gpio()
