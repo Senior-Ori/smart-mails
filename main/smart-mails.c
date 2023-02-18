@@ -31,8 +31,12 @@
 /** GLOBALS **/
 int ir_sensor_data[4] = {0, 0, 0, 0};
 int previous_ir_sensor_data[4] = {0, 0, 0, 0};
-char *wifi_pass = NULL;
-char *wifi_user = NULL;
+char *wifi_pass_ptr = NULL;
+char *wifi_user_ptr = NULL;
+char wifi_pass[33] = {'\0'};
+char wifi_user[65] = {'\0'};
+int wifi_flag = 1;
+nvs_handle_t my_handle;
 
 /* FreeRTOS event group to signal when we are connected & ready to make a request */
 static EventGroupHandle_t s_wifi_event_group;
@@ -46,6 +50,7 @@ static const char *TAG = "smartconfig_example";
 
 void setup_gpio();
 void transmit_data();
+void initialize_text(char *arr, const char **ptr);
 char *combine_strings(char *str1, char *str2);
 void separate_strings(char *combined_str, char **str1, char **str2);
 char *numbers_to_string(int a, int b, int c, int d);
@@ -55,7 +60,7 @@ static void smartconfig_example_task(void *parm);
 static void post_rest_function(char *str);
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt);
 static void wifi_event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
-void wifi_connection(char *str1, char *str2);
+void wifi_connection(char *wifi_user_ptr, char *wifi_pass_ptr);
 
 void app_main(void)
 {
@@ -83,6 +88,7 @@ static void wifi_event_handler(void *event_handler_arg, esp_event_base_t event_b
         break;
     case WIFI_EVENT_STA_DISCONNECTED:
         printf("WiFi lost connection ... \n");
+        wifi_flag = 0;
         break;
     case IP_EVENT_STA_GOT_IP:
         printf("WiFi got IP ... \n\n");
@@ -92,8 +98,9 @@ static void wifi_event_handler(void *event_handler_arg, esp_event_base_t event_b
     }
 }
 
-void wifi_connection(char *str1, char *str2)
+void wifi_connection(char *wifi_user_ptr, char *wifi_pass_ptr)
 {
+
     // 1 - Wi-Fi/LwIP Init Phase
     esp_netif_init();                    // TCP/IP initiation 					s1.1
     esp_event_loop_create_default();     // event loop 			                s1.2
@@ -105,8 +112,8 @@ void wifi_connection(char *str1, char *str2)
     esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, wifi_event_handler, NULL);
     wifi_config_t wifi_configuration = {
         .sta = {
-            .ssid = SSID,
-            .password = PASS}};
+            .ssid = {wifi_user_ptr},
+            .password = {wifi_pass_ptr}}};
     esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_configuration);
     // 3 - Wi-Fi Start Phase
     esp_wifi_start();
@@ -240,6 +247,15 @@ static void event_handler(void *arg, esp_event_base_t event_base,
 
         memcpy(ssid, evt->ssid, sizeof(evt->ssid));
         memcpy(password, evt->password, sizeof(evt->password));
+
+        // Write data, key - "data", value - "write_string"
+        char *combined_str = combine_strings(ssid, password);
+
+        nvs_set_str(my_handle, "data", combined_str);
+        printf("Write data: %s\n", combined_str);
+        nvs_commit(my_handle);
+        nvs_close(my_handle);
+
         ESP_LOGI(TAG, "SSID:%s", ssid);
         ESP_LOGI(TAG, "PASSWORD:%s", password);
         if (evt->type == SC_TYPE_ESPTOUCH_V2)
@@ -263,13 +279,12 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
-void connect_wifi(char *wifi_user, char *wifi_pass)
+void connect_wifi(char *wifi_user_ptr, char *wifi_pass_ptr)
 {
     esp_netif_init();
 }
 static void initialise_wifi(void)
 {
-    nvs_handle_t my_handle;
     nvs_open("storage", NVS_READWRITE, &my_handle);
     // Read data, key - "data", value - "read_data"
     size_t required_size = 0;
@@ -277,9 +292,12 @@ static void initialise_wifi(void)
     char *server_name = malloc(required_size);
     nvs_get_str(my_handle, "data", server_name, &required_size);
 
-    separate_strings(server_name, &wifi_pass, &wifi_user);
-    ESP_LOGI("transmit_data", "ESP_WIFI_MODE_AP");
+    separate_strings(server_name, &wifi_pass_ptr, &wifi_user_ptr);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     // login wifi cred
+    wifi_connection(&wifi_user_ptr, &wifi_pass_ptr);
+    if (wifi_flag == 0)
+        return;
 
     ESP_ERROR_CHECK(esp_netif_init());
     s_wifi_event_group = xEventGroupCreate();
@@ -447,4 +465,9 @@ char *numbers_to_string(int a, int b, int c, int d)
     result[2] = c + '0';
     result[3] = d + '0';
     return result;
+}
+
+void initialize_text(char *arr, const char **ptr)
+{
+    strncpy(arr, *ptr, strlen(*ptr) + 1);
 }
