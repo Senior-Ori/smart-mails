@@ -1,44 +1,73 @@
--- Found Git: C:/Users/ori88/esp-idf/tools/tools/idf-git/2.30.1/cmd/git.exe (found version "2.30.1.windows.1") 
--- ccache will be used for faster recompilation
--- The C compiler identification is GNU 11.2.0
--- The CXX compiler identification is GNU 11.2.0
--- The ASM compiler identification is GNU
--- Found assembler: C:/Users/ori88/esp-idf/tools/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc.exe
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: C:/Users/ori88/esp-idf/tools/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc.exe - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: C:/Users/ori88/esp-idf/tools/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-g++.exe - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Building ESP-IDF components for target esp32
--- Project sdkconfig file C:/esp/esp-idf/projects/smart-mails/sdkconfig
--- Looking for sys/types.h
--- Looking for sys/types.h - found
--- Looking for stdint.h
--- Looking for stdint.h - found
--- Looking for stddef.h
--- Looking for stddef.h - found
--- Check size of time_t
--- Check size of time_t - done
--- Found Python3: C:/Users/ori88/esp-idf/tools/python_env/idf5.0_py3.8_env/Scripts/python.exe (found version "3.8.7") found components: Interpreter 
--- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
--- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
--- App "smart-mails" version: 9e1b079-dirty
--- Adding linker script C:/esp/esp-idf/projects/smart-mails/build/esp-idf/esp_system/ld/memory.ld
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/esp_system/ld/esp32/sections.ld.in
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.ld
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.api.ld
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.libgcc.ld
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.newlib-data.ld
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.syscalls.ld
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/esp_rom/esp32/ld/esp32.rom.newlib-funcs.ld
--- Adding linker script C:/Users/ori88/esp/esp-idf/components/soc/esp32/ld/esp32.peripherals.ld
--- Components: app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp_adc esp_app_format esp_common esp_eth esp_event esp_gdbstub esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_local_ctrl esp_netif esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_system esp_timer esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser idf_test ieee802154 json log lwip main mbedtls mqtt newlib nvs_flash openthread partition_table perfmon protobuf-c protocomm pthread sdmmc soc spi_flash spiffs tcp_transport ulp unity usb vfs wear_levelling wifi_provisioning wpa_supplicant xtensa
--- Component paths: C:/Users/ori88/esp/esp-idf/components/app_trace C:/Users/ori88/esp/esp-idf/components/app_update C:/Users/ori88/esp/esp-idf/components/bootloader C:/Users/ori88/esp/esp-idf/components/bootloader_support C:/Users/ori88/esp/esp-idf/components/bt C:/Users/ori88/esp/esp-idf/components/cmock C:/Users/ori88/esp/esp-idf/components/console C:/Users/ori88/esp/esp-idf/components/cxx C:/Users/ori88/esp/esp-idf/components/driver C:/Users/ori88/esp/esp-idf/components/efuse C:/Users/ori88/esp/esp-idf/components/esp-tls C:/Users/ori88/esp/esp-idf/components/esp_adc C:/Users/ori88/esp/esp-idf/components/esp_app_format C:/Users/ori88/esp/esp-idf/components/esp_common C:/Users/ori88/esp/esp-idf/components/esp_eth C:/Users/ori88/esp/esp-idf/components/esp_event C:/Users/ori88/esp/esp-idf/components/esp_gdbstub C:/Users/ori88/esp/esp-idf/components/esp_hid C:/Users/ori88/esp/esp-idf/components/esp_http_client C:/Users/ori88/esp/esp-idf/components/esp_http_server C:/Users/ori88/esp/esp-idf/components/esp_https_ota C:/Users/ori88/esp/esp-idf/components/esp_https_server C:/Users/ori88/esp/esp-idf/components/esp_hw_support C:/Users/ori88/esp/esp-idf/components/esp_lcd C:/Users/ori88/esp/esp-idf/components/esp_local_ctrl C:/Users/ori88/esp/esp-idf/components/esp_netif C:/Users/ori88/esp/esp-idf/components/esp_partition C:/Users/ori88/esp/esp-idf/components/esp_phy C:/Users/ori88/esp/esp-idf/components/esp_pm C:/Users/ori88/esp/esp-idf/components/esp_psram C:/Users/ori88/esp/esp-idf/components/esp_ringbuf C:/Users/ori88/esp/esp-idf/components/esp_rom C:/Users/ori88/esp/esp-idf/components/esp_system C:/Users/ori88/esp/esp-idf/components/esp_timer C:/Users/ori88/esp/esp-idf/components/esp_wifi C:/Users/ori88/esp/esp-idf/components/espcoredump C:/Users/ori88/esp/esp-idf/components/esptool_py C:/Users/ori88/esp/esp-idf/components/fatfs C:/Users/ori88/esp/esp-idf/components/freertos C:/Users/ori88/esp/esp-idf/components/hal C:/Users/ori88/esp/esp-idf/components/heap C:/Users/ori88/esp/esp-idf/components/http_parser C:/Users/ori88/esp/esp-idf/components/idf_test C:/Users/ori88/esp/esp-idf/components/ieee802154 C:/Users/ori88/esp/esp-idf/components/json C:/Users/ori88/esp/esp-idf/components/log C:/Users/ori88/esp/esp-idf/components/lwip C:/esp/esp-idf/projects/smart-mails/main C:/Users/ori88/esp/esp-idf/components/mbedtls C:/Users/ori88/esp/esp-idf/components/mqtt C:/Users/ori88/esp/esp-idf/components/newlib C:/Users/ori88/esp/esp-idf/components/nvs_flash C:/Users/ori88/esp/esp-idf/components/openthread C:/Users/ori88/esp/esp-idf/components/partition_table C:/Users/ori88/esp/esp-idf/components/perfmon C:/Users/ori88/esp/esp-idf/components/protobuf-c C:/Users/ori88/esp/esp-idf/components/protocomm C:/Users/ori88/esp/esp-idf/components/pthread C:/Users/ori88/esp/esp-idf/components/sdmmc C:/Users/ori88/esp/esp-idf/components/soc C:/Users/ori88/esp/esp-idf/components/spi_flash C:/Users/ori88/esp/esp-idf/components/spiffs C:/Users/ori88/esp/esp-idf/components/tcp_transport C:/Users/ori88/esp/esp-idf/components/ulp C:/Users/ori88/esp/esp-idf/components/unity C:/Users/ori88/esp/esp-idf/components/usb C:/Users/ori88/esp/esp-idf/components/vfs C:/Users/ori88/esp/esp-idf/components/wear_levelling C:/Users/ori88/esp/esp-idf/components/wifi_provisioning C:/Users/ori88/esp/esp-idf/components/wpa_supplicant C:/Users/ori88/esp/esp-idf/components/xtensa
--- Configuring done
--- Generating done
--- Build files have been written to: C:/esp/esp-idf/projects/smart-mails/build
+[1/5] cmd.exe /C "cd /D C:\esp\esp-idf\projects\smart-mails\build\esp-idf\esptool_py && C:\Users\ori88\esp-idf\tools\python_env\idf5.0_py3.8_env\Scripts\python.exe C:/Users/ori88/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/esp/esp-idf/projects/smart-mails/build/partition_table/partition-table.bin C:/esp/esp-idf/projects/smart-mails/build/smart-mails.bin"
+smart-mails.bin binary size 0xd9860 bytes. Smallest app partition is 0x100000 bytes. 0x267a0 bytes (15%) free.
+[2/5] Performing build step for 'bootloader'
+[1/1] cmd.exe /C "cd /D C:\esp\esp-idf\projects\smart-mails\build\bootloader\esp-idf\esptool_py && C:\Users\ori88\esp-idf\tools\python_env\idf5.0_py3.8_env\Scripts\python.exe C:/Users/ori88/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 C:/esp/esp-idf/projects/smart-mails/build/bootloader/bootloader.bin"
+Bootloader binary size 0x6710 bytes. 0x8f0 bytes (8%) free.
+[2/3] cmd.exe /C "cd /D C:\Users\ori88\esp\esp-idf\components\esptool_py && C:\Users\ori88\esp-idf\tools\tools\cmake\3.24.0\bin\cmake.exe -D IDF_PATH=C:/Users/ori88/esp/esp-idf -D SERIAL_TOOL=C:/Users/ori88/esp-idf/tools/python_env/idf5.0_py3.8_env/Scripts/python.exe;;C:/Users/ori88/esp/esp-idf/components/esptool_py/esptool/esptool.py;--chip;esp32 -D SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args -D WORKING_DIRECTORY=C:/esp/esp-idf/projects/smart-mails/build -P C:/Users/ori88/esp/esp-idf/components/esptool_py/run_serial_tool.cmake"
+esptool esp32 -p COM8 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 bootloader/bootloader.bin 0x10000 smart-mails.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.4
+Serial port COM8
+Connecting....
+Chip is ESP32-D0WD-V3 (revision v3.0)
+Features: WiFi, BT, Dual Core, 240MHz, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: 78:21:84:bb:52:3c
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00001000 to 0x00007fff...
+Flash will be erased from 0x00010000 to 0x000e9fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+Compressed 26384 bytes to 16424...
+Writing at 0x00001000... (50 %)
+Writing at 0x000076f2... (100 %)
+Wrote 26384 bytes (16424 compressed) at 0x00001000 in 0.8 seconds (effective 248.7 kbit/s)...
+Hash of data verified.
+Compressed 890976 bytes to 571484...
+Writing at 0x00010000... (2 %)
+Writing at 0x0001baf4... (5 %)
+Writing at 0x00026775... (8 %)
+Writing at 0x0002bae2... (11 %)
+Writing at 0x00033d0d... (14 %)
+Writing at 0x0003c6de... (17 %)
+Writing at 0x00041f08... (20 %)
+Writing at 0x000478f5... (22 %)
+Writing at 0x0004d5f8... (25 %)
+Writing at 0x0005300b... (28 %)
+Writing at 0x00058d9b... (31 %)
+Writing at 0x0005e8ca... (34 %)
+Writing at 0x00063ab7... (37 %)
+Writing at 0x00068efd... (40 %)
+Writing at 0x0006e255... (42 %)
+Writing at 0x00073797... (45 %)
+Writing at 0x00078f6e... (48 %)
+Writing at 0x0007eb18... (51 %)
+Writing at 0x000846ff... (54 %)
+Writing at 0x0008a07c... (57 %)
+Writing at 0x0008f855... (60 %)
+Writing at 0x0009512e... (62 %)
+Writing at 0x0009a86f... (65 %)
+Writing at 0x000a00fb... (68 %)
+Writing at 0x000a59ab... (71 %)
+Writing at 0x000ab926... (74 %)
+Writing at 0x000b14d1... (77 %)
+Writing at 0x000b6d9c... (80 %)
+Writing at 0x000bcfef... (82 %)
+Writing at 0x000c2927... (85 %)
+Writing at 0x000c8259... (88 %)
+Writing at 0x000d0dd8... (91 %)
+Writing at 0x000d94f8... (94 %)
+Writing at 0x000df214... (97 %)
+Writing at 0x000e4ad8... (100 %)
+Wrote 890976 bytes (571484 compressed) at 0x00010000 in 13.1 seconds (effective 543.3 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 103...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.1 seconds (effective 320.6 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
