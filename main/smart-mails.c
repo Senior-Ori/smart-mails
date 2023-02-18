@@ -58,6 +58,8 @@ static void post_rest_function(char *str);
 void setup_gpio();
 char *numbers_to_string(int a, int b, int c, int d);
 void transmit_data();
+char *combine_strings(char *str1, char *str2);
+void separate_strings(char *combined_str, char **str1, char **str2);
 
 void app_main(void)
 {
@@ -344,4 +346,82 @@ void transmit_data()
         }
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
+}
+
+/*
+    int main()
+    {
+        char* str1 = "Ori";
+        char* str2 = "Lober";
+        char* combined_str = combine_strings(str1, str2);
+        printf("Combined string: %s\n", combined_str);
+        char* separated_str1 = NULL;
+        char* separated_str2 = NULL;
+        separate_strings(combined_str, &separated_str1, &separated_str2);
+        printf("Separated string 1: %s\n", separated_str1);
+        printf("Separated string 2: %s\n", separated_str2);
+        // free memory
+        free(combined_str);
+        free(separated_str1);
+        free(separated_str2);
+        return 0;
+    }
+    */
+
+char *combine_strings(char *str1, char *str2)
+{
+    int len1 = strlen(str1);
+    int len2 = strlen(str2);
+    int combined_len = len1 + len2 + 3; // +3 for the colons and null terminator
+    char *combined_str = (char *)malloc(combined_len * sizeof(char));
+
+    if (combined_str == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        exit(1);
+    }
+
+    sprintf(combined_str, "%d:%d:%s%s", len1, len2, str1, str2);
+    return combined_str;
+}
+void separate_strings(char *combined_str, char **str1, char **str2)
+{
+    int len1, len2, count1 = 0, count2 = 0;
+    sscanf(combined_str, "%d:%d:", &len1, &len2);
+
+    *str1 = (char *)malloc((len1 + 1) * sizeof(char));
+    *str2 = (char *)malloc((len2 + 1) * sizeof(char));
+
+    if (*str1 == NULL || *str2 == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        exit(1);
+    }
+
+    while (combined_str[count1] != ':')
+    {
+        (count1)++;
+    }
+    count2 = count1 + 1;
+    while (combined_str[count2] != ':')
+    {
+        (count2)++;
+    }
+    count2++;
+
+    int i = 0;
+    while (i < len1)
+    {
+        (*str1)[i] = combined_str[i + count2];
+        i++;
+    }
+    (*str1)[i] = '\0';
+
+    i = 0;
+    while (i < len2)
+    {
+        (*str2)[i] = combined_str[i + len1 + count2];
+        i++;
+    }
+    (*str2)[i] = '\0';
 }
