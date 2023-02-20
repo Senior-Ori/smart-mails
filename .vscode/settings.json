@@ -20,7 +20,12 @@
     "esp_compiler.h": "c",
     "assert.h": "c",
     "esp_smartconfig.h": "c",
-    "stdint.h": "c"
+    "stdint.h": "c",
+    "ostream": "c",
+    "xlocmon": "c",
+    "xlocnum": "c",
+    "xloctime": "c",
+    "*.tcc": "c"
   },
   "idf.adapterTargetName": "esp32"
 }

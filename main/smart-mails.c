@@ -61,7 +61,7 @@ static int s_retry_num = 0;
 /** FUNCTIONS **/
 esp_err_t connect_wifi();
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt);
-static void post_rest_function(char *str);
+static int post_rest_function(char *str);
 void setup_gpio();
 char *numbers_to_string(int a, int b, int c, int d);
 void transmit_data();
@@ -70,6 +70,7 @@ void separate_strings(char *combined_str, char **str1, char **str2);
 static void smartconfig_example_task(void *parm);
 static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 static void initialise_wifi(void);
+bool is_wifi_ready();
 // static const char *TAG2 = "POST_FUNCTION";
 
 void app_main(void)
@@ -81,8 +82,8 @@ void app_main(void)
     ESP_LOGI("WIFI", "initiated ...........");
 
     vTaskDelay(2000 / portTICK_PERIOD_MS);
-    ESP_LOGI("transmit_data", "initiated ...........");
-    // xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 5, NULL);
+    // ESP_LOGI("transmit_data", "initiated ...........");
+    //  xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 5, NULL);
 }
 
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
@@ -99,21 +100,22 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
     return ESP_OK;
 }
 
-static void post_rest_function(char *str)
+static int post_rest_function(char *str)
 {
-    esp_http_client_config_t config_post = {
+    esp_http_client_config_t config_put = {
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .event_handler = client_event_post_handler,
         .is_async = true,
         .skip_cert_common_name_check = true,
         .max_redirection_count = 0,
-        //.keep_alive_enable = true,
-        .timeout_ms = 3000};
+        .keep_alive_enable = true,
+        .timeout_ms = 2000};
 
-    esp_http_client_handle_t client = esp_http_client_init(&config_post);
+    esp_http_client_handle_t client = esp_http_client_init(&config_put);
     esp_err_t err;
-    char post_data[15];
+    char post_data[14];
     sprintf(post_data, "{\"irs\":\"%s\"}", str);
+
     esp_http_client_set_method(client, HTTP_METHOD_PUT);
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
@@ -134,15 +136,19 @@ static void post_rest_function(char *str)
         ESP_LOGI(TAG, "HTTPS Status = %d, content_length = %" PRIu64,
                  esp_http_client_get_status_code(client),
                  esp_http_client_get_content_length(client));
+        esp_http_client_cleanup(client);
+        return 1;
     }
     else
     {
         ESP_LOGE(TAG, "Error perform http request %s", esp_err_to_name(err));
+        esp_http_client_cleanup(client);
         vTaskDelay(80 / portTICK_PERIOD_MS);
+        return 0;
     }
 
     // Cleanup the HTTP client
-    esp_http_client_cleanup(client);
+    // esp_http_client_cleanup(client);
 }
 
 void setup_gpio()
@@ -179,6 +185,8 @@ char *numbers_to_string(int a, int b, int c, int d)
 void transmit_data()
 {
     ESP_LOGI("transmit_data", "STARTED!");
+    esp_wifi_connect();
+
     while (true)
     {
         // send the data of the IR sensors to the HT12E
@@ -199,8 +207,16 @@ void transmit_data()
         }
         if (isChanged == 0)
         {
-            post_rest_function(numbers_to_string(ir_sensor_data[0], ir_sensor_data[1], ir_sensor_data[2], ir_sensor_data[3]));
 
+            while (!is_wifi_ready())
+            {
+                ESP_LOGI(TAG, "Waiting for WiFi to be ready...");
+                vTaskDelay(pdMS_TO_TICKS(1000));
+            }
+            ESP_LOGI(TAG, "WiFi is ready to use!");
+            if (post_rest_function(numbers_to_string(ir_sensor_data[0], ir_sensor_data[1], ir_sensor_data[2], ir_sensor_data[3])))
+                for (int i = 0; i < 4; i++)
+                    previous_ir_sensor_data[i] = ir_sensor_data[i];
             gpio_set_level(HT12E_D0, ir_sensor_data[0]);
             gpio_set_level(HT12E_D1, ir_sensor_data[1]);
             gpio_set_level(HT12E_D2, ir_sensor_data[2]);
@@ -208,9 +224,6 @@ void transmit_data()
             gpio_set_level(HT12E_TE, 1);
             vTaskDelay(100 / portTICK_PERIOD_MS);
             gpio_set_level(HT12E_TE, 0);
-
-            for (int i = 0; i < 4; i++)
-                previous_ir_sensor_data[i] = ir_sensor_data[i];
             ESP_LOGI("executed", "transmit_data!");
         }
         vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -373,7 +386,7 @@ static void smartconfig_example_task(void *parm)
         if (uxBits & CONNECTED_BIT)
         {
             ESP_LOGI(TAG, "WiFi Connected to ap");
-            xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 3, NULL);
+            xTaskCreate(transmit_data, "transmit_data", 8192, NULL, 3, NULL);
         }
         if (uxBits & ESPTOUCH_DONE_BIT)
         {
@@ -381,5 +394,18 @@ static void smartconfig_example_task(void *parm)
             esp_smartconfig_stop();
             vTaskDelete(NULL);
         }
+    }
+}
+bool is_wifi_ready()
+{
+    wifi_ap_record_t ap_info;
+    esp_err_t ret = esp_wifi_sta_get_ap_info(&ap_info);
+    if (ret == ESP_OK)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
