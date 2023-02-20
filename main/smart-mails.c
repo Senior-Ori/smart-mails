@@ -68,10 +68,8 @@ void transmit_data();
 char *combine_strings(char *str1, char *str2);
 void separate_strings(char *combined_str, char **str1, char **str2);
 static void smartconfig_example_task(void *parm);
-static void event_handler(void *arg, esp_event_base_t event_base,
-                          int32_t event_id, void *event_data);
+static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
 static void initialise_wifi(void);
-static void smartconfig_example_task(void *parm);
 // static const char *TAG2 = "POST_FUNCTION";
 
 void app_main(void)
@@ -79,12 +77,12 @@ void app_main(void)
     ESP_ERROR_CHECK(nvs_flash_init());
     setup_gpio();
 
-    // initialise_wifi();
+    initialise_wifi();
     ESP_LOGI("WIFI", "initiated ...........");
 
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     ESP_LOGI("transmit_data", "initiated ...........");
-    xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 5, NULL);
+    // xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 5, NULL);
 }
 
 esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
@@ -109,8 +107,8 @@ static void post_rest_function(char *str)
         .is_async = true,
         .skip_cert_common_name_check = true,
         .max_redirection_count = 0,
-        .keep_alive_enable = true,
-        .timeout_ms = 5000};
+        //.keep_alive_enable = true,
+        .timeout_ms = 3000};
 
     esp_http_client_handle_t client = esp_http_client_init(&config_post);
     esp_err_t err;
@@ -140,6 +138,7 @@ static void post_rest_function(char *str)
     else
     {
         ESP_LOGE(TAG, "Error perform http request %s", esp_err_to_name(err));
+        vTaskDelay(80 / portTICK_PERIOD_MS);
     }
 
     // Cleanup the HTTP client
@@ -179,6 +178,7 @@ char *numbers_to_string(int a, int b, int c, int d)
 
 void transmit_data()
 {
+    ESP_LOGI("transmit_data", "STARTED!");
     while (true)
     {
         // send the data of the IR sensors to the HT12E
@@ -275,8 +275,7 @@ void separate_strings(char *combined_str, char **str1, char **str2)
     (*str2)[i] = '\0';
 }
 
-static void event_handler(void *arg, esp_event_base_t event_base,
-                          int32_t event_id, void *event_data)
+static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
     {
@@ -374,6 +373,7 @@ static void smartconfig_example_task(void *parm)
         if (uxBits & CONNECTED_BIT)
         {
             ESP_LOGI(TAG, "WiFi Connected to ap");
+            xTaskCreate(transmit_data, "transmit_data", 4096, NULL, 3, NULL);
         }
         if (uxBits & ESPTOUCH_DONE_BIT)
         {
