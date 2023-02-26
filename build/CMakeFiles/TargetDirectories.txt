@@ -601,3 +601,10 @@ C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/list_instal
 C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/install.dir
 C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/install/local.dir
 C:/esp/esp-idf/projects/smart-mails/build/esp-idf/testing/CMakeFiles/install/strip.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/wifi_smartconfig/CMakeFiles/__idf_wifi_smartconfig.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/wifi_smartconfig/CMakeFiles/edit_cache.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/wifi_smartconfig/CMakeFiles/rebuild_cache.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/wifi_smartconfig/CMakeFiles/list_install_components.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/wifi_smartconfig/CMakeFiles/install.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/wifi_smartconfig/CMakeFiles/install/local.dir
+C:/esp/esp-idf/projects/smart-mails/build/esp-idf/wifi_smartconfig/CMakeFiles/install/strip.dir

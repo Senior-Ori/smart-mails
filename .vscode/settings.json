@@ -25,7 +25,15 @@
     "xlocmon": "c",
     "xlocnum": "c",
     "xloctime": "c",
-    "*.tcc": "c"
+    "*.tcc": "c",
+    "timers.h": "c",
+    "esp_event.h": "c",
+    "sys.h": "c",
+    "esp_netif.h": "c",
+    "wifi.h": "c",
+    "esp_sleep.h": "c",
+    "esp_wpa2.h": "c",
+    "time.h": "c"
   },
   "idf.adapterTargetName": "esp32",
   "idf.portWin": "COM8"

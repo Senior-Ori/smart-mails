@@ -1,0 +1,7 @@
+[0/1] Re-running CMake...
+-- ccache will be used for faster recompilation
+-- Building ESP-IDF components for target esp32
+-- Configuring incomplete, errors occurred!
+See also "C:/esp/esp-idf/projects/smart-mails/build/CMakeFiles/CMakeOutput.log".
+FAILED: build.ninja 
+C:\Users\ori88\esp-idf\tools\tools\cmake\3.24.0\bin\cmake.exe --regenerate-during-build -SC:\esp\esp-idf\projects\smart-mails -BC:\esp\esp-idf\projects\smart-mails\build
