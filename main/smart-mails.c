@@ -99,9 +99,9 @@ esp_err_t client_event_post_handler(esp_http_client_event_handle_t evt)
     }
     return ESP_OK;
 }
-
 static int post_rest_function(char *str)
 {
+    // Define variables
     esp_http_client_config_t config_put = {
         .url = "https://ori-projects-default-rtdb.europe-west1.firebasedatabase.app/esp32project.json",
         .event_handler = client_event_post_handler,
@@ -110,19 +110,35 @@ static int post_rest_function(char *str)
         .max_redirection_count = 0,
         .keep_alive_enable = true,
         .timeout_ms = 2000};
-
-    esp_http_client_handle_t client = esp_http_client_init(&config_put);
+    esp_http_client_handle_t client;
     esp_err_t err;
-    char post_data[14];
-    sprintf(post_data, "{\"irs\":\"%s\"}", str);
+    int ret = 0;
 
+    // Allocate memory for post_data based on length of str
+    size_t post_data_len = strlen(str) + 14;
+    char *post_data = (char *)malloc(post_data_len);
+    if (post_data == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate memory for post_data");
+        return 0;
+    }
+    snprintf(post_data, post_data_len, "{\"irs\":\"%s\"}", str);
+
+    // Initialize HTTP client
+    client = esp_http_client_init(&config_put);
+    if (client == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to initialize HTTP client");
+        free(post_data);
+        return 0;
+    }
+
+    // Set HTTP method, post data, and headers
     esp_http_client_set_method(client, HTTP_METHOD_PUT);
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
-    // Send the HTTP request
-
-    // Check for errors
+    // Send HTTP request and check for errors
     while (1)
     {
         err = esp_http_client_perform(client);
@@ -136,21 +152,20 @@ static int post_rest_function(char *str)
         ESP_LOGI(TAG, "HTTPS Status = %d, content_length = %" PRIu64,
                  esp_http_client_get_status_code(client),
                  esp_http_client_get_content_length(client));
-        esp_http_client_cleanup(client);
-        return 1;
+        ret = 1;
     }
     else
     {
-        ESP_LOGE(TAG, "Error perform http request %s", esp_err_to_name(err));
-        esp_http_client_cleanup(client);
+        ESP_LOGE(TAG, "Error perform HTTP request %s", esp_err_to_name(err));
         vTaskDelay(80 / portTICK_PERIOD_MS);
-        return 0;
     }
 
-    // Cleanup the HTTP client
-    // esp_http_client_cleanup(client);
-}
+    // Cleanup and free memory
+    esp_http_client_cleanup(client);
+    free(post_data);
 
+    return ret;
+}
 void setup_gpio()
 {
     // configure the IR sensor pins as inputs
@@ -357,21 +372,16 @@ static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_
 
 static void initialise_wifi(void)
 {
-    ESP_ERROR_CHECK(esp_netif_init());
+    wifi_event_group = xEventGroupCreate(); // Create an event group smartconfig event group
     s_wifi_event_group = xEventGroupCreate();
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    ESP_ERROR_CHECK(esp_netif_init()); // Create an event group Read wifi confiuration information from external flash event
+
+    ESP_ERROR_CHECK(esp_event_loop_create_default()); // wifi incident
     esp_netif_t *sta_netif = esp_netif_create_default_wifi_sta();
     assert(sta_netif);
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
-    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
-    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler, NULL));
-    ESP_ERROR_CHECK(esp_event_handler_register(SC_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
-
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg)); // wifi initialization
 }
 
 static void smartconfig_example_task(void *parm)
@@ -401,11 +411,7 @@ bool is_wifi_ready()
     wifi_ap_record_t ap_info;
     esp_err_t ret = esp_wifi_sta_get_ap_info(&ap_info);
     if (ret == ESP_OK)
-    {
         return true;
-    }
     else
-    {
         return false;
-    }
 }

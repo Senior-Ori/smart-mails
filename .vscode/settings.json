@@ -27,5 +27,6 @@
     "xloctime": "c",
     "*.tcc": "c"
   },
-  "idf.adapterTargetName": "esp32"
+  "idf.adapterTargetName": "esp32",
+  "idf.portWin": "COM8"
 }
